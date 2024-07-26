@@ -1,0 +1,54 @@
+#define RED_PIN 2
+#define GREEN_PIN 3
+#define BLUE_PIN 4
+#define POT_PIN 0
+
+void setup() {
+  pinMode(RED_PIN, OUTPUT);
+  pinMode(GREEN_PIN, OUTPUT);
+  pinMode(BLUE_PIN, OUTPUT);
+  analogReadResolution(12); // Set ADC resolution to 12 bits (0-4095)
+}
+
+void loop() {
+  int potValue = analogRead(POT_PIN);
+  
+  // Map potentiometer value (0-4095) to 0-1530 (full RGB color wheel)
+  int colorPosition = map(potValue, 0, 4095, 0, 1530);
+
+  // Determine RGB values based on the color wheel position
+  int redValue, greenValue, blueValue;
+
+  if (colorPosition < 255) {          // Red to Yellow
+    redValue = 255;
+    greenValue = colorPosition;
+    blueValue = 0;
+  } else if (colorPosition < 510) {   // Yellow to Green
+    redValue = 510 - colorPosition;
+    greenValue = 255;
+    blueValue = 0;
+  } else if (colorPosition < 765) {   // Green to Cyan
+    redValue = 0;
+    greenValue = 255;
+    blueValue = colorPosition - 510;
+  } else if (colorPosition < 1020) {  // Cyan to Blue
+    redValue = 0;
+    greenValue = 1020 - colorPosition;
+    blueValue = 255;
+  } else if (colorPosition < 1275) {  // Blue to Magenta
+    redValue = colorPosition - 1020;
+    greenValue = 0;
+    blueValue = 255;
+  } else {                            // Magenta to Red
+    redValue = 255;
+    greenValue = 0;
+    blueValue = 1530 - colorPosition;
+  }
+
+  // Set RGB LED color
+  analogWrite(RED_PIN, redValue);
+  analogWrite(GREEN_PIN, greenValue);
+  analogWrite(BLUE_PIN, blueValue);
+
+  delay(10); // Small delay to stabilize the readings
+}
